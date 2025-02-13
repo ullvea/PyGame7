@@ -139,6 +139,7 @@ class Camera:
         obj.rect.x += self.dx
         obj.rect.y += self.dy
 
+
     # позиционировать камеру на объекте target
     def update(self, target):
         self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
@@ -151,7 +152,7 @@ def start_screen(screen):
                   "Если в правилах несколько строк,",
                   "приходится выводить их построчно"]
 
-    fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(load_image('fon.jpg'), (screen.get_width(), screen.get_height()))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 50
@@ -175,19 +176,18 @@ def start_screen(screen):
         clock.tick(FPS)
 
 
-
 if __name__ == '__main__':
     try:
         new_map = input('Введите название желаемой карты либо напишите default для открытия стандартной карты: ')
         if new_map == 'default':
-            new_map = 'map1.txt'
+            new_map = 'map3.txt'
         player, level_x, level_y = generate_level(load_level(new_map))
     except Exception:
         print('Ошибка !')
         terminate()
     pygame.init()
     pygame.display.set_caption('Перемещение героя')
-    screen = pygame.display.set_mode(size)
+    screen = pygame.display.set_mode((600, 600))
     start_screen(screen)
     running2 = True
     camera = Camera()
@@ -205,11 +205,15 @@ if __name__ == '__main__':
                 if event.key == pygame.K_LEFT:
                     player.move('left')
         screen.fill((0, 0, 0))
+
+        all_sprites.update(pygame.key.get_pressed())
         camera.update(player)
         for sprite in all_sprites:
             camera.apply(sprite)
+
         tiles_group.draw(screen)
         player_group.draw(screen)
+
         pygame.display.flip()
         clock.tick(FPS)
     pygame.quit()
